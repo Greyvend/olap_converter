@@ -93,11 +93,50 @@ package OLAP_Converter.RDB.Connection is
 private
    type DBMS is abstract tagged limited
       record
-         Name : Unbounded_String;                        --!TODO: add list of Connection Names
-         DB : aliased Qt4.Sql_Databases.Q_Sql_Database; --!TODO: DB - active Q_Sql_Database
+         Name    : Unbounded_String;
+         DB : aliased Qt4.Sql_Databases.Q_Sql_Database;
       end record;
 
    function Attribute_Names
      (Attrs : Attribute_Array;
       Modifier : String) return Unbounded_String;
+
+   procedure Free_DBMS is new Ada.Unchecked_Deallocation
+     (Object => DBMS'Class, Name => Access_DBMS);
+--/arc_qt
+--     type DBMS_Connection is abstract tagged limited  <- goes to Queries package
+--        record
+--           DBMS_Name : Unbounded_String;
+--           DB_Name   : Unbounded_String;
+--        end record;
+--
+--     procedure Connect (...) - replaces old one
+--     is
+--     begin
+--        --/stub: use Generic_Constructor later
+--        Access_System := new OLAP_Converter.RDB.Connection.MySQL.DBMS;
+--        --\stub
+--        Append (Access_System.Name, Driver_Name);
+--        Append (Access_System.DB_Name, Database_Name);
+--
+--        Access_System.DB := Qt4.Sql_Databases.Add_Database
+--          (From_Utf_8 (Driver_Name),
+--           From_Utf_16 (Database_Name));
+--
+--        Access_System.DB.Set_Host_Name (From_Utf_8 (Host_Name));
+--        Access_System.DB.Set_Database_Name (From_Utf_16 (Database_Name));
+--        Access_System.DB.Set_User_Name (From_Utf_8 (User_Name));
+--        Access_System.DB.Set_Password (From_Utf_8 (Password));
+--
+--        if not Access_System.DB.Open then
+--           raise Program_Error;
+--        end if;
+--
+--        Result.Schema := Pull_Schema (Access_System);
+--        Result.Access_System := Access_System;
+--        return Result;
+--     end Connect;
+--/arc_qt
+
+
 end OLAP_Converter.RDB.Connection;

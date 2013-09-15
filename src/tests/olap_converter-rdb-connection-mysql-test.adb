@@ -190,6 +190,15 @@ begin
          raise Program_Error;
    end;
 
+   Disconnect (Connection);
+
+   Connection := Connect
+     (Driver_Name   => "QMYSQL",
+      Host_Name     => "localhost",
+      Database_Name => "TJ_Test1",
+      User_Name     => "root",
+      Password      => "mysql");
+
    Print ("Create TJ from given relations and attributes");
    declare
       A       : constant Attribute := Create_Attribute ("A");
@@ -238,6 +247,8 @@ begin
       else
          Print ("Attribute amounts returned are correct");
       end if;
+
+
    exception
       when others =>
          Print ("!!! Error occured");

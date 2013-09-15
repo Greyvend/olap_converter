@@ -357,8 +357,8 @@ begin
 
       function Contains (Who : Attribute_Array; Whom : Attribute_Array) return Boolean;
       function Basic_Attributes return Attribute_Array;
-      --        function Subsets_Basic_PK (R : Relation) return Boolean;
-      --        function Intersects_Basic (R : Relation) return Boolean;
+      function Subsets_Basic_PK (R : Relation) return Boolean;
+      function Intersects_Basic (R : Relation) return Boolean;
 
       function Contains (Who : Attribute_Array; Whom : Attribute_Array) return Boolean is
          Found : Boolean := False;
@@ -445,8 +445,6 @@ begin
       F       : constant Attribute := Create_Attribute ("F");
 
       R3, R6, R8 : Relation;
-
-      --R1 : constant Relation := Create_Relation ("Начало_занятий",
    begin
       Connection
         := Connect
@@ -455,6 +453,7 @@ begin
            Database_Name => "CWL_1",
            User_Name     => "root",
            Password      => "mysql");
+
       Basic_Relations := Connection.Schema.Relations;
 
       if not Contains ((S, A, C, P), (S, C))
@@ -487,6 +486,8 @@ begin
       Delete_Relation (R3);
       Delete_Relation (R6);
 
+      Disconnect (Connection);
+
       Connection
         := Connect
           (Driver_Name   => "QMYSQL",
@@ -494,27 +495,21 @@ begin
            Database_Name => "faculty",
            User_Name     => "root",
            Password      => "mysql");
-      for I in Connection.Schema.Functional_Dependencies'Range loop
-         for J in Connection.Schema.Functional_Dependencies (I).Left'Range loop
-            Ada.Text_IO.Put ( To_String (Connection.Schema.Functional_Dependencies (I).Left (J).Name));
-         end loop;
-         Ada.Text_IO.Put (" -> ");
-         for J in Connection.Schema.Functional_Dependencies (I).Right'Range loop
-            Ada.Text_IO.Put_Line ( To_String (Connection.Schema.Functional_Dependencies (I).Right (J).Name));
-         end loop;
-      end loop;
+--        for I in Connection.Schema.Functional_Dependencies'Range loop
+--           for J in Connection.Schema.Functional_Dependencies (I).Left'Range loop
+--              Ada.Text_IO.Put ( To_String (Connection.Schema.Functional_Dependencies (I).Left (J).Name));
+--           end loop;
+--           Ada.Text_IO.Put (" -> ");
+--           for J in Connection.Schema.Functional_Dependencies (I).Right'Range loop
+--              Ada.Text_IO.Put_Line ( To_String (Connection.Schema.Functional_Dependencies (I).Right (J).Name));
+--           end loop;
+--        end loop;
 
       Basic_Relations := new Relation_Array (1..4);
       Basic_Relations.all := (Connection.Schema.Relations (1),
                               Connection.Schema.Relations (2),
                               Connection.Schema.Relations (4),
                               Connection.Schema.Relations (5));
-
-      --Basic_Relations (1) := Connection.Schema.Relations (1);
---                                ,
---                                Connection.Schema.Relations (2),
---                                Connection.Schema.Relations (4),
---                                Connection.Schema.Relations (5));
 
       R3 := Connection.Schema.Relations (3); --Оценки
       R6 := Connection.Schema.Relations (6); --Расписание
@@ -537,6 +532,8 @@ begin
                   "is said to be not contained in basic");
          raise Program_Error;
       end if;
+
+      Disconnect (Connection);
    end;
 
    Print ("Simple test on Context itself");
@@ -545,7 +542,7 @@ begin
       use type Ada.Containers.Count_Type;
       --pseudo Contexts function interface:
 
-      Connection : constant RDB_Connection
+      Connection : RDB_Connection
           := Connect
             (Driver_Name   => "QMYSQL",
              Host_Name     => "localhost",
@@ -553,7 +550,6 @@ begin
              User_Name     => "root",
              Password      => "mysql");
       Basic_Relations : Access_Relation_Array;
-      R4, R7 : Relation;
       Context_List : List;
       C            : Cursor;
       --        N_prepoda : Attribute := Create_Attribute ("№_преподавателя");
@@ -602,6 +598,8 @@ begin
       end if;
       Print ("Context received are correct");
       Iterate (Context_List, Print_Elem'Access);
+
+      Disconnect (Connection);
    end;
 
    --     ---------

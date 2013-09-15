@@ -73,11 +73,12 @@ package body OLAP_Converter.RDB.Connection is
       Access_System := new OLAP_Converter.RDB.Connection.MySQL.DBMS;
       --\stub
       Append (Access_System.Name, Driver_Name);
+      --Append (Access_System.DB_Name, Database_Name);
 
       --Qt4.Sql_Databases.Remove_Database (Default_Connection);
       Access_System.DB := Qt4.Sql_Databases.Add_Database
-        (From_Utf_8 (Driver_Name),
-         From_Utf_16 (Database_Name));
+        (From_Utf_8 (Driver_Name));
+      --From_Utf_16 (Database_Name));
 
       Access_System.DB.Set_Host_Name (From_Utf_8 (Host_Name));
       Access_System.DB.Set_Database_Name (From_Utf_16 (Database_Name));
@@ -100,11 +101,8 @@ package body OLAP_Converter.RDB.Connection is
    procedure Disconnect (RDB_C : in out RDB_Connection)
    is
    begin
-      if RDB_C.Access_System.DB.Is_Open then
-         --!cannot Remove_Connection (Default_Connection) because of a bug:
-         --!connection is still in use
-         RDB_C.Access_System.DB.Close;
-      end if;
+      Free_DBMS (RDB_C.Access_System);
+      Remove_Database (Default_Connection);
       Clear_Schema (RDB_C.Schema);
    end Disconnect;
 
