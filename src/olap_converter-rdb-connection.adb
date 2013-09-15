@@ -239,7 +239,7 @@ package body OLAP_Converter.RDB.Connection is
 
    procedure Drop_Table
      (Self : not null access DBMS;
-      R    : Relation)
+      Name : String)
    is
       use Qt4;
       use Qt4.Variants;
@@ -247,7 +247,7 @@ package body OLAP_Converter.RDB.Connection is
       Query        : aliased Qt4.Sql_Queries.Q_Sql_Query := Self.DB.Create;
       Query_String : Unbounded_String := To_Unbounded_String ("drop table ");
    begin
-      Append (Query_String, R.Name);
+      Append (Query_String, Name);
       Append (Query_String, To_Unbounded_String (";"));
 
       if not Query.Exec (From_Utf_8 (To_String (Query_String))) then

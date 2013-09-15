@@ -150,7 +150,7 @@ package body OLAP_Converter.RDB.Connection.MySQL is
       Append (Query_String, Full_Name);
       Append (Query_String, To_Unbounded_String (" select distinct "));
       Append (Query_String, Attribute_Names (Attrs, ","));
-      Append (Query_String, To_Unbounded_String ("from ("));
+      Append (Query_String, To_Unbounded_String (" from ("));
 
       for I in Relations'Range loop
          Append (Query_String, Relations (I).Name);

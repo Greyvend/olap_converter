@@ -88,8 +88,7 @@ package OLAP_Converter.RDB.Connection is
 
    procedure Drop_Table
      (Self : not null access DBMS;
-      R    : Relation);
-
+      Name : String);
 private
    type DBMS is abstract tagged limited
       record
@@ -137,6 +136,4 @@ private
 --        return Result;
 --     end Connect;
 --/arc_qt
-
-
 end OLAP_Converter.RDB.Connection;

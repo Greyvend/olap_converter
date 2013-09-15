@@ -66,7 +66,7 @@ begin
 
       Checked_Result := Table (Connection.Access_System, Table_Name);
       Print ("Table successfully created");
-      Connection.Access_System.Drop_Table (Checked_Result);
+      Connection.Access_System.Drop_Table (To_String (Checked_Result.Name));
    exception
       when others =>
          Print ("!!! Error in creating temp table");
@@ -100,7 +100,7 @@ begin
       else
          Print ("Primary Key successfully assigned");
       end if;
-      Connection.Access_System.Drop_Table (Checked_Result);
+      Connection.Access_System.Drop_Table (To_String (Checked_Result.Name));
    exception
       when others =>
          Print ("!!! Error occured");
@@ -213,42 +213,57 @@ begin
       D_Amount : constant Natural := 4;
       F_Amount : constant Natural := 4;
 
-      R1      : Relation := Create_Relation ("R1", (A, B, C));
-      R2      : Relation := Create_Relation ("R2", (C, D, E));
-      R3      : Relation := Create_Relation ("R3", (E, F, G));
+      R1 : constant Relation := Create_Relation ("R1", (A, B, C));
+      R2 : constant Relation := Create_Relation ("R2", (C, D, E));
+      R3 : constant Relation := Create_Relation ("R3", (E, F, G));
 
       Formula : constant String := "";
       TJ_Name : constant String := "TJ_R1_R2_R3";
+
       Checked_Result : Relation;
+
+      Raised : Boolean := False;
    begin
+      if Connection.Access_System.Table (TJ_Name).Attributes.all
+        /= Empty_Attr_Array
+      then
+         Connection.Access_System.Drop_Table (TJ_Name);
+      end if;
+
       Connection.Access_System.Create_TJ
         (Name      => TJ_Name,
          Relations => (R1, R2, R3),
          Attrs     => (A, B, C, D, E, F, G),
          Formula   => Formula);
 
-      Checked_Result := Connection.Access_System.Table (TJ_Name);
-      Connection.Access_System.Count_Attributes (Checked_Result);
+      declare
+      begin
+         Checked_Result := Connection.Access_System.Table (TJ_Name);
+         Connection.Access_System.Count_Attributes (Checked_Result);
 
---        procedure Create_TJ
---          (Self      : not null access DBMS;
---           Name      : String;
---           DB_Name   : String := "";
---           Relations : Relation_Array;
---           Attrs     : Attribute_Array;
---           Formula   : String)
+         if Checked_Result.Attributes (1).Value_Amount /= A_Amount
+           or else Checked_Result.Attributes (4).Value_Amount /= D_Amount
+           or else Checked_Result.Attributes (6).Value_Amount /= F_Amount
+         then
+            Print ("Wrong 'Count_Attributes' query result");
+            Connection.Access_System.Drop_Table (TJ_Name);
+            raise Program_Error;
+         else
+            Print ("Attribute amounts returned are correct");
+         end if;
+      exception
+         when others =>
+            Raised := True;
+      end;
 
-      if Checked_Result.Attributes (1).Value_Amount /= A_Amount
-        or else Checked_Result.Attributes (2).Value_Amount /= D_Amount
-        or else Checked_Result.Attributes (3).Value_Amount /= F_Amount
-      then
-         Print ("Wrong 'Count_Attributes' query result");
+      Delete_Relation (R1);
+      Delete_Relation (R2);
+      Delete_Relation (R3);
+      Connection.Access_System.Drop_Table (TJ_Name);
+
+      if Raised then
          raise Program_Error;
-      else
-         Print ("Attribute amounts returned are correct");
       end if;
-
-
    exception
       when others =>
          Print ("!!! Error occured");

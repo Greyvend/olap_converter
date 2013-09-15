@@ -65,7 +65,7 @@ begin
 
       Checked_Result := Table (Connection.Access_System, Table_Name);
       Print ("Table successfully created");
-      Connection.Access_System.Drop_Table (Checked_Result);
+      Connection.Access_System.Drop_Table (To_String (Checked_Result.Name));
    exception
       when others =>
          Print ("!!! Error in creating temp table");
@@ -99,7 +99,7 @@ begin
       else
          Print ("Primary Key successfully assigned");
       end if;
-      Connection.Access_System.Drop_Table (Checked_Result);
+      Connection.Access_System.Drop_Table (To_String (Checked_Result.Name));
    exception
       when others =>
          Print ("!!! Error occured");
