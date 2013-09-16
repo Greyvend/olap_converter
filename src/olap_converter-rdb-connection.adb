@@ -4,11 +4,11 @@ with Qt4.Strings;
 with Qt4.Sql_Queries;
 --with Qt4.Sql_Databases;
 with Qt4.Sql_Records;
+
 use Qt4.Sql_Records;
 
 --  --/stub: use Generic_Constructor later
 with OLAP_Converter.RDB.Connection.MySQL;
-with Ada.Text_IO;
 --  --\stub
 
 package body OLAP_Converter.RDB.Connection is
@@ -48,16 +48,10 @@ package body OLAP_Converter.RDB.Connection is
          begin
             for I in 0 .. (Size (Q_List) - 1) loop
                Table_Name := Qt4.Strings.Value (Q_List, I);
-               --Relations (Standard.Integer (I + 1)) := Table (Access_System, To_Utf_8 (Table_Name));
                Append (Relations (Standard.Integer (I + 1)).Name, To_Utf_8 (Table_Name));
                Access_System.Attributes (Relations (Standard.Integer (I + 1)));
 
                Access_System.Primary_Key (Relations (Standard.Integer (I + 1)));
-               declare
-                  test_array : Attribute_Array := Relations (Standard.Integer (I + 1)).Primary;
-               begin
-                  null;
-               end;
             end loop;
 
             Set_Schema (Relations, Schema);
@@ -185,9 +179,11 @@ package body OLAP_Converter.RDB.Connection is
      (Self : not null access DBMS'Class;
       Name : String) return Relation
    is
-      use Qt4.Sql_Records;
+      --use Qt4.Sql_Records;
       use Qt4.Strings;
       use type Qt4.Q_Integer;
+
+      R : Relation;
 
       Cur_Record : constant Q_Sql_Record :=
         Self.DB.Table_Record (From_Utf_8 (Name));
@@ -195,14 +191,18 @@ package body OLAP_Converter.RDB.Connection is
    begin
       for J in 0 .. Count (Cur_Record) - 1 loop
          Attributes (Standard.Integer (J + 1)) :=
-           (Name => To_Unbounded_String (To_Utf_8 (Field_Name (Cur_Record, J))),
+           (Name          => To_Unbounded_String (To_Utf_8 (Field_Name (Cur_Record, J))),
             Relation_Name => To_Unbounded_String (Name),
-            Current_Value => To_Unbounded_String(""),
-            Value_Type => To_Unbounded_String("No_Value_Type"),
-            Value_Amount => 0);
+            Current_Value => To_Unbounded_String (""),
+            Value_Type    => To_Unbounded_String ("No_Value_Type"),
+            Value_Amount  => 0);
       end loop;
 
-      return Create_Relation (Name, Attributes);
+      R := Create_Relation (Name, Attributes);
+      Self.Count_Attributes (R);
+      Self.Primary_Key (R);
+
+      return R;
    end Table;
 
    ----------------------
@@ -254,7 +254,6 @@ package body OLAP_Converter.RDB.Connection is
          raise Program_Error;
       end if;
    end Drop_Table;
-
 
    --------------------------
    -- Inclusion_Dependency --

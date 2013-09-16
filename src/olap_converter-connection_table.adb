@@ -3,31 +3,25 @@ with Ada.Containers.Generic_Array_Sort;
 package body OLAP_Converter.Connection_Table is
 
    function TJ
-     (Name    : String;
-      Attrs   : Attribute_Array;
-      Context : Relation_Array;
-      P       : Predicate) return Relation
+     (Self       : not null access DBMS'Class;
+      DB_Name    : String := "";
+      Name       : String;
+      Attrs      : Attribute_Array;
+      Context    : Relation_Array;
+      P          : Predicate) return Relation
    is
       TJ : Relation;
    begin
-      --        -- block 1
-      --        Find_Intersection_Attributes:
-      --        declare
-      --        begin
-      --           for I in Context.Attributes'Range loop
-      --
-      --           end loop;
-      --
-      --        end Find_Intersection_Attributes;
+      Self.Create_TJ
+        (DB_Name   => DB_Name,
+         Name      => Name,
+         Relations => Context,
+         Attrs     => Attrs,
+         Formula   => "");
 
-      --         ^^^^ don't do the DBMS work
+      --TJ := Create_Relation (Name, Attrs);
+      TJ := Self.Table (Name);
 
-      -- block 2
-      --Create_TJ (...);
-
-      TJ := Create_Relation (Name, Attrs);
-
-      -- block 3
       Hierarchy_Setup:
       declare
          -- by decreasing the amount of values, that the attribute has

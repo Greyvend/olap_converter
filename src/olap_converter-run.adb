@@ -10,4 +10,5 @@ is
 begin
    OLAP_Converter.Contexts.Test;
    OLAP_Converter.RDB.Connection.MySQL.Test;
+   OLAP_Converter.Connection_Table.Test;
 end OLAP_Converter.Run;

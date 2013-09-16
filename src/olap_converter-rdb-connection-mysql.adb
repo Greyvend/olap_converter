@@ -4,6 +4,11 @@ with Qt4.Variants;      use Qt4.Variants;
 with Qt4.Strings;       use Qt4.Strings;
 
 package body OLAP_Converter.RDB.Connection.MySQL is
+
+   ----------------
+   -- Attributes --
+   ----------------
+
    procedure Attributes
      (Self : not null access DBMS;
       R    : in out Relation)
@@ -27,17 +32,21 @@ package body OLAP_Converter.RDB.Connection.MySQL is
                R.Attributes := new Attribute_Array (1 .. Integer (Query.Size));
                while Query.Next loop
                   R.Attributes (I) :=
-                    (Name => To_Unbounded_String (To_Utf_8 (Query.Value (Q_Integer (0)).To_String)),
+                    (Name          => To_Unbounded_String (To_Utf_8 (Query.Value (Q_Integer (0)).To_String)),
                      Relation_Name => R.Name,
-                     Current_Value => To_Unbounded_String(""),
-                     Value_Type => To_Unbounded_String("No_Value_Type"),
-                     Value_Amount => 0);
+                     Current_Value => To_Unbounded_String (""),
+                     Value_Type    => To_Unbounded_String ("No_Value_Type"),
+                     Value_Amount  => 0);
                   I := I + 1;
                end loop;
             end;
          end if;
       end if;
    end Attributes;
+
+   -----------------
+   -- Primary_Key --
+   -----------------
 
    procedure Primary_Key
      (Self : not null access DBMS;
@@ -75,7 +84,15 @@ package body OLAP_Converter.RDB.Connection.MySQL is
             declare
                I : Positive := 1;
             begin
-               R.Primary_Key := new Index_Array (1 .. Integer (Query.Size));
+               if R.Primary_Key /= null then
+                  if R.Primary_Key'Length /= Integer (Query.Size) then
+                     Free_Index_Array (R.Primary_Key);
+                     R.Primary_Key := new Index_Array (1 .. Integer (Query.Size));
+                  end if;
+               else
+                  R.Primary_Key := new Index_Array (1 .. Integer (Query.Size));
+               end if;
+
                while Query.Next loop
                   R.Primary_Key (I) := Attr_Search
                     (To_Unbounded_String (To_Utf_8 (Query.Value (Q_Integer (0)).To_String)));
@@ -90,6 +107,10 @@ package body OLAP_Converter.RDB.Connection.MySQL is
       --               and TABLE_NAME='INFO'
       --               and COLUMN_KEY='PRI';
    end Primary_Key;
+
+   ------------------
+   -- Create_Table --
+   ------------------
 
    procedure Create_Table
      (Self : not null access DBMS;
@@ -131,8 +152,8 @@ package body OLAP_Converter.RDB.Connection.MySQL is
 
    procedure Create_TJ
      (Self      : not null access DBMS;
-      Name      : String;
       DB_Name   : String := "";
+      Name      : String;
       Relations : Relation_Array;
       Attrs     : Attribute_Array;
       Formula   : String)

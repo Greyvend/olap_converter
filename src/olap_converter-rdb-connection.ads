@@ -80,8 +80,8 @@ package OLAP_Converter.RDB.Connection is
 
    procedure Create_TJ
      (Self      : not null access DBMS;
-      Name      : String;
       DB_Name   : String := "";
+      Name      : String;
       Relations : Relation_Array;
       Attrs     : Attribute_Array;
       Formula   : String) is abstract;

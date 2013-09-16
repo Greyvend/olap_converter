@@ -260,6 +260,7 @@ begin
       Delete_Relation (R2);
       Delete_Relation (R3);
       Connection.Access_System.Drop_Table (TJ_Name);
+      Disconnect (Connection);
 
       if Raised then
          raise Program_Error;
