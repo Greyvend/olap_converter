@@ -29,7 +29,15 @@ package body OLAP_Converter.RDB.Connection.MySQL is
             declare
                I : Positive := 1;
             begin
-               R.Attributes := new Attribute_Array (1 .. Integer (Query.Size));
+               if R.Attributes /= null then
+                  if R.Attributes'Length /= Integer (Query.Size) then
+                     Free_Attribute_Array (R.Attributes);
+                     R.Attributes := new Attribute_Array (1 .. Integer (Query.Size));
+                  end if;
+               else
+                  R.Attributes := new Attribute_Array (1 .. Integer (Query.Size));
+               end if;
+
                while Query.Next loop
                   R.Attributes (I) :=
                     (Name          => To_Unbounded_String (To_Utf_8 (Query.Value (Q_Integer (0)).To_String)),

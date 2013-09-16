@@ -187,7 +187,7 @@ package body OLAP_Converter.RDB.Connection is
 
       Cur_Record : constant Q_Sql_Record :=
         Self.DB.Table_Record (From_Utf_8 (Name));
-      Attributes : Attribute_Array (1..Standard.Integer (Qt4.Sql_Records.Count (Cur_Record)));
+      Attributes : Attribute_Array (1 .. Standard.Integer (Qt4.Sql_Records.Count (Cur_Record)));
    begin
       for J in 0 .. Count (Cur_Record) - 1 loop
          Attributes (Standard.Integer (J + 1)) :=
