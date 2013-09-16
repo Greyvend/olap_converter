@@ -184,21 +184,9 @@ package body OLAP_Converter.RDB.Connection is
       use type Qt4.Q_Integer;
 
       R : Relation;
-
-      Cur_Record : constant Q_Sql_Record :=
-        Self.DB.Table_Record (From_Utf_8 (Name));
-      Attributes : Attribute_Array (1 .. Standard.Integer (Qt4.Sql_Records.Count (Cur_Record)));
    begin
-      for J in 0 .. Count (Cur_Record) - 1 loop
-         Attributes (Standard.Integer (J + 1)) :=
-           (Name          => To_Unbounded_String (To_Utf_8 (Field_Name (Cur_Record, J))),
-            Relation_Name => To_Unbounded_String (Name),
-            Current_Value => To_Unbounded_String (""),
-            Value_Type    => To_Unbounded_String ("No_Value_Type"),
-            Value_Amount  => 0);
-      end loop;
-
-      R := Create_Relation (Name, Attributes);
+      Append (R.Name, Name);
+      Self.Attributes (R);
       Self.Count_Attributes (R);
       Self.Primary_Key (R);
 
