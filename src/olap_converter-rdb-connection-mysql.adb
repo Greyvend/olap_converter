@@ -17,11 +17,19 @@ package body OLAP_Converter.RDB.Connection.MySQL is
         To_Unbounded_String ("select COLUMN_NAME " &
                                "from information_schema.COLUMNS " &
                                "where ");
+      DB    : String := DB_Name (To_String (R.Name));
+      Table : String := Table_Name (To_String (R.Name));
    begin
       Append (Query_String, To_Unbounded_String ("TABLE_SCHEMA='"));
-      Append (Query_String, To_Unbounded_String (To_Utf_8 (Self.DB.Database_Name)));
+
+      if DB = "" then
+         Append (Query_String, To_Unbounded_String (To_Utf_8 (Self.DB.Database_Name)));
+      else
+         Append (Query_String, To_Unbounded_String (DB));
+      end if;
+
       Append (Query_String, To_Unbounded_String ("' and TABLE_NAME='"));
-      Append (Query_String, R.Name);
+      Append (Query_String, Table);
       Append (Query_String, To_Unbounded_String ("';"));
 
       if Query.Exec (From_Utf_8 (To_String (Query_String))) then
@@ -40,7 +48,8 @@ package body OLAP_Converter.RDB.Connection.MySQL is
 
                while Query.Next loop
                   R.Attributes (I) :=
-                    (Name          => To_Unbounded_String (To_Utf_8 (Query.Value (Q_Integer (0)).To_String)),
+                    (Name          => To_Unbounded_String
+                       (To_Utf_8 (Query.Value (Q_Integer (0)).To_String)),
                      Relation_Name => R.Name,
                      Current_Value => To_Unbounded_String (""),
                      Value_Type    => To_Unbounded_String ("No_Value_Type"),

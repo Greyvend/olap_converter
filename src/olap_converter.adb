@@ -1,3 +1,6 @@
+with Ada.Strings.Fixed;
+use Ada.Strings.Fixed;
+
 package body Olap_Converter is
 
    function Equals
@@ -50,7 +53,6 @@ package body Olap_Converter is
       return Equals (X, Y);
    end "=";
 
-
    ----------------------
    -- Create_Attribute --
    ----------------------
@@ -59,11 +61,11 @@ package body Olap_Converter is
    is
       Result : Attribute;
    begin
-      Result := (Name => To_Unbounded_String(Name),
-                 Relation_Name => To_Unbounded_String(""),
-                 Value_Type => To_Unbounded_String("No_Value_Type"),
-                 Current_Value => To_Unbounded_String(""),
-                 Value_Amount => 0);
+      Result := (Name          => To_Unbounded_String (Name),
+                 Relation_Name => To_Unbounded_String (""),
+                 Value_Type    => To_Unbounded_String ("No_Value_Type"),
+                 Current_Value => To_Unbounded_String (""),
+                 Value_Amount  => 0);
       return Result;
    end Create_Attribute;
 
@@ -120,4 +122,18 @@ package body Olap_Converter is
       Free_Index_Array (Access_Index);
    end Delete_Relation;
 
+   function DB_Name (Name : String) return String
+   is
+      Dot_Position : constant Integer := Index (Name, ".");
+   begin
+      --if Dot_Position = 0 then
+      return Name (Name'First .. Dot_Position - 1);
+   end DB_Name;
+
+   function Table_Name (Name : String) return String
+   is
+      Dot_Position : constant Integer := Index (Name, ".");
+   begin
+      return Name (Dot_Position + 1 .. Name'Last);
+   end Table_Name;
 end OLAP_Converter;

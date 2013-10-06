@@ -19,7 +19,6 @@ package body OLAP_Converter.Connection_Table is
          Attrs     => Attrs,
          Formula   => "");
 
-      --TJ := Create_Relation (Name, Attrs);
       TJ := Self.Table (Name);
 
       Hierarchy_Setup:

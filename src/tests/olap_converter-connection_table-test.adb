@@ -52,12 +52,16 @@ begin
       R3 : constant Relation := Create_Relation ("R3", (E, F, G));
 
       P       : Predicate;
-      DB_Name : constant String := "test";
-      TJ_Name : constant String := "TJ_R1_R2_R3";
+
+      DB_Name    : constant String := "test";
+      Table_Name : constant String := "TJ_R1_R2_R3";
+      TJ_Name    : constant String := Full_Name (DB_Name, Table_Name);
 
       Checked_Result : Relation;
 
       Raised : Boolean := False;
+
+      test_relation : Relation := Create_Relation ("employee", Empty_Attr_Array);
    begin
       if Connection.Access_System.Table (TJ_Name).Attributes.all
         /= Empty_Attr_Array
@@ -65,9 +69,10 @@ begin
          Connection.Access_System.Drop_Table (TJ_Name);
       end if;
 
+      --Connection.Access_System.Attributes (R1);
+
       Checked_Result := TJ
         (Self       => Connection.Access_System,
-         DB_Name    => DB_Name,
          Name       => TJ_Name,
          Attrs      => Attrs,
          Context    => (R1, R2, R3),
@@ -94,7 +99,7 @@ begin
       Delete_Relation (R1);
       Delete_Relation (R2);
       Delete_Relation (R3);
-      Connection.Access_System.Drop_Table (DB_Name & "." & TJ_Name);
+      Connection.Access_System.Drop_Table (TJ_Name);
       Disconnect (Connection);
 
       if Raised then

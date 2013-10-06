@@ -50,11 +50,19 @@ package OLAP_Converter is
 
    function Primary (R : Relation'Class) return Attribute_Array;
 
+   -- procedures to Create/Delete relations
    function Create_Relation
      (Name  : String;
       Attrs : Attribute_Array;
       PK    : Index_Array := Empty_Index_Array) return Relation;
    procedure Delete_Relation (R : Relation);
+
+   -- Dot notation "DB.Table" composing functions
+   function Full_Name (DB_Name : String; Table_Name : String) return String
+   is (DB_Name & "." & Table_Name);
+
+   function DB_Name (Name : String) return String;
+   function Table_Name (Name : String) return String;
 private
    function Equals
      (X : Attribute;
