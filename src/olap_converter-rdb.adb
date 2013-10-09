@@ -29,7 +29,6 @@ package body OLAP_Converter.RDB is
      (Left : String;
       Right : String) return Functional_Dependency
    is
-      use Ada.Strings.Unbounded;
       D : Functional_Dependency;
    begin
       D.Left := new Attribute_Array(1..1);
@@ -60,9 +59,11 @@ package body OLAP_Converter.RDB is
    begin
       MVD.Base.Left := new Attribute_Array (Left_Part'Range);
       MVD.Base.Right := new Attribute_Array (Right_Part'Range);
+
       for I in Left_Part'Range loop
          MVD.Base.Left.all (I) := Left_Part (I);
       end loop;
+
       for I in Right_Part'Range loop
          MVD.Base.Right.all(I) := Right_Part(I);
       end loop;

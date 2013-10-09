@@ -60,16 +60,12 @@ begin
       Checked_Result : Relation;
 
       Raised : Boolean := False;
-
-      test_relation : Relation := Create_Relation ("employee", Empty_Attr_Array);
    begin
       if Connection.Access_System.Table (TJ_Name).Attributes.all
         /= Empty_Attr_Array
       then
          Connection.Access_System.Drop_Table (TJ_Name);
       end if;
-
-      --Connection.Access_System.Attributes (R1);
 
       Checked_Result := TJ
         (Self       => Connection.Access_System,

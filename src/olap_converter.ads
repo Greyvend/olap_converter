@@ -5,6 +5,10 @@ package OLAP_Converter is
    --Базовый пакет, в котором содержатся описания основных типов
    use Ada.Strings.Unbounded;
 
+   type Name_Array is array (Positive range <>) of Unbounded_String;
+
+   Empty_Name_Array : Name_Array (1 .. 0);
+
    type Attribute is
       record
          Name          : Unbounded_String;
@@ -26,6 +30,8 @@ package OLAP_Converter is
    type Access_Attribute_Array is access all Attribute_Array;
 
    Empty_Attr_Array : Attribute_Array (1..0);
+
+   procedure Sort_Attributes (Attrs : in out Attribute_Array);
 
    type Index_Array is array (Positive range <>) of Positive;
    type Access_Index_Array is access all Index_Array;

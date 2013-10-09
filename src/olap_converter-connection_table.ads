@@ -5,7 +5,7 @@ use OLAP_Converter.RDB.Connection;
 use OLAP_Converter.RDB.Connection.Predicates;
 
 package OLAP_Converter.Connection_Table is
-   -- low level procedures of creating relational tables (using RDB_Connector),
+   -- low level procedures for creating relational tables (using RDB_Connector),
    -- that contain dimension context realizations and application context realization (TJs)
    function TJ
      (Self       : not null access DBMS'Class;

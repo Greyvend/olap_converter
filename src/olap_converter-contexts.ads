@@ -15,7 +15,6 @@ package OLAP_Converter.Contexts is
       Basic_Relations : Relation_Array;
       Deps            : FD_Array) return List_Of_Contexts.List;
 private
-
    function Closure
      (Attrs : Attribute_Array;
       Deps : FD_Array) return Attribute_Array;

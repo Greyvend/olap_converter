@@ -1,7 +1,13 @@
+with Ada.Containers.Generic_Array_Sort;
 with Ada.Strings.Fixed;
+
 use Ada.Strings.Fixed;
 
 package body Olap_Converter is
+
+   ------------
+   -- Equals --
+   ------------
 
    function Equals
      (X : Attribute;
@@ -14,6 +20,10 @@ package body Olap_Converter is
       return False;
    end Equals;
 
+   ------------
+   -- Equals --
+   ------------
+
    function Equals
      (X : Relation;
       Y : Relation) return Boolean
@@ -24,6 +34,10 @@ package body Olap_Converter is
       end if;
       return False;
    end Equals;
+
+   ---------------------
+   -- Extended_Equals --
+   ---------------------
 
    function Extended_Equals
      (X : Attribute;
@@ -37,6 +51,10 @@ package body Olap_Converter is
       return False;
    end Extended_Equals;
 
+   ---------
+   -- "=" --
+   ---------
+
    function "="
      (X : Attribute;
       Y : Attribute) return Boolean
@@ -44,6 +62,10 @@ package body Olap_Converter is
    begin
       return Equals (X, Y);
    end "=";
+
+   ---------
+   -- "=" --
+   ---------
 
    function "="
      (X : Relation;
@@ -122,6 +144,10 @@ package body Olap_Converter is
       Free_Index_Array (Access_Index);
    end Delete_Relation;
 
+   -------------
+   -- DB_Name --
+   -------------
+
    function DB_Name (Name : String) return String
    is
       Dot_Position : constant Integer := Index (Name, ".");
@@ -130,10 +156,39 @@ package body Olap_Converter is
       return Name (Name'First .. Dot_Position - 1);
    end DB_Name;
 
+   ----------------
+   -- Table_Name --
+   ----------------
+
    function Table_Name (Name : String) return String
    is
       Dot_Position : constant Integer := Index (Name, ".");
    begin
       return Name (Dot_Position + 1 .. Name'Last);
    end Table_Name;
+
+   ---------------------
+   -- Sort_Attributes --
+   ---------------------
+
+   procedure Sort_Attributes (Attrs : in out Attribute_Array)
+   is
+      -- by decreasing the amount of values, that the attribute has
+      function Greater (L, R : Attribute) return Boolean
+      is
+      begin
+         if L.Value_Amount > R.Value_Amount then
+            return True;
+         end if;
+         return False;
+      end Greater;
+
+      procedure Sort_By_Decrease is new
+        Ada.Containers.Generic_Array_Sort (Index_Type => Positive,
+                                           Element_Type => Attribute,
+                                           Array_Type => Attribute_Array,
+                                           "<" => Greater);
+   begin
+      Sort_By_Decrease (Attrs);
+   end Sort_Attributes;
 end OLAP_Converter;

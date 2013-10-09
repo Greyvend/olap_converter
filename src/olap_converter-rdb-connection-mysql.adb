@@ -17,8 +17,8 @@ package body OLAP_Converter.RDB.Connection.MySQL is
         To_Unbounded_String ("select COLUMN_NAME " &
                                "from information_schema.COLUMNS " &
                                "where ");
-      DB    : String := DB_Name (To_String (R.Name));
-      Table : String := Table_Name (To_String (R.Name));
+      DB    : constant String := DB_Name (To_String (R.Name));
+      Table : constant String := Table_Name (To_String (R.Name));
    begin
       Append (Query_String, To_Unbounded_String ("TABLE_SCHEMA='"));
 

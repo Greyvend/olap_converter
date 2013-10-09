@@ -546,6 +546,10 @@ package body OLAP_Converter.Contexts is
       end Is_Lossless_For_Relation_Combinations;
    end Contexts;
 
+   --------------------
+   -- All_Attributes --
+   --------------------
+
    function All_Attributes (Relations : Relation_Array) return Attribute_Array
    is
       package List_Of_Attributes is new Ada.Containers.Doubly_Linked_Lists (Attribute);

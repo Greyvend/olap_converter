@@ -2,10 +2,6 @@ with Qt4;
 with Qt4.Variants;
 with Qt4.Strings;
 with Qt4.Sql_Queries;
---with Qt4.Sql_Databases;
-with Qt4.Sql_Records;
-
-use Qt4.Sql_Records;
 
 --  --/stub: use Generic_Constructor later
 with OLAP_Converter.RDB.Connection.MySQL;
